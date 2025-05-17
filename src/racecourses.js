@@ -4,14 +4,14 @@ export const racecourses = {
     lat: 35.6639,
     lon: 139.4846,
     image: "/racecourses/tokyo.svg",
-    northOffset: 180
+    northOffset: 0
   },
   nakayama: {
     name: "中山",
     lat: 35.7170,
     lon: 140.0208,
     image: "/racecourses/nakayama.svg",
-    northOffset: 270
+    northOffset: 90
   },
   kyoto: {
     name: "京都",
@@ -25,14 +25,14 @@ export const racecourses = {
     lat: 34.7211,
     lon: 135.3613,
     image: "/racecourses/hanshin.svg",
-    northOffset: 180
+    northOffset: 0
   },
   chukyo: {
     name: "中京",
     lat: 35.1561,
     lon: 136.9274,
     image: "/racecourses/chukyo.svg",
-    northOffset: 45
+    northOffset: 225
   },
   kokura: {
     name: "小倉",
@@ -67,6 +67,6 @@ export const racecourses = {
     lat: 37.9024,
     lon: 139.0232,
     image: "/racecourses/niigata.svg",
-    northOffset: 0
+    northOffset: 180
   }
 };
