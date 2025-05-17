@@ -6,7 +6,7 @@ function App() {
   const [weather, setWeather] = useState(null);
 
   useEffect(() => {
-    const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
+ const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
     const fetchWeather = () => {
       const { lat, lon } = racecourses[selected];
       fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}&lang=ja`)
@@ -16,7 +16,6 @@ function App() {
             speed: data.wind?.speed,
             deg: data.wind?.deg,
             description: data.weather?.[0]?.description,
-            timestamp: new Date(),
           })
         )
         .catch(err => console.error("API fetch error:", err));
@@ -45,6 +44,7 @@ function App() {
 
   return (
     <div className="p-4 max-w-md mx-auto">
+      <h1 className="text-xl font-bold mb-4">赤い矢印の方向へ風が吹いています</h1>
       <h1 className="text-xl font-bold mb-4">競馬場の選択</h1>
 
       <select
@@ -81,10 +81,10 @@ function App() {
             <circle cx="50" cy="50" r="45" stroke="#3b82f6" strokeWidth="4" fill="white" />
             <polygon points="50,5 35,30 65,30" fill="#ef4444" />
             <line x1="50" y1="30" x2="50" y2="50" stroke="#ef4444" strokeWidth="4" />
-            <text x="48" y="12" fontSize="8" fill="#333">N</text>
-            <text x="88" y="52" fontSize="8" fill="#333">E</text>
-            <text x="48" y="92" fontSize="8" fill="#333">S</text>
-            <text x="8"  y="52" fontSize="8" fill="#333">W</text>
+            <text x="48" y="12" fontSize="8" fill="#333">*</text>
+            <text x="88" y="52" fontSize="8" fill="#333">*</text>
+            <text x="48" y="92" fontSize="8" fill="#333">*</text>
+            <text x="8"  y="52" fontSize="8" fill="#333">*</text>
           </svg>
         )}
       </div>
@@ -95,11 +95,6 @@ function App() {
           <p>風速: {weather.speed} m/s</p>
           <p>風向き: {getDirection(weather.deg)}（{weather.deg}°）</p>
           {weather.description && <p>天候: {weather.description}</p>}
-          {weather.timestamp && (
-            <p className="text-sm text-gray-500">
-              最終更新: {weather.timestamp.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-            </p>
-          )}
         </div>
       ) : (
         <p>読み込み中...</p>
