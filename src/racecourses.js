@@ -18,7 +18,7 @@ export const racecourses = {
     lat: 34.9086,
     lon: 135.7256,
     image: "/racecourses/kyoto.svg",
-    northOffset: 225
+    northOffset: 45
   },
   hanshin: {
     name: "阪神",
