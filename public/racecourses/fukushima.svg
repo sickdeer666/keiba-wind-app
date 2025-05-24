@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100" width="200" height="100">
+  <!-- 外枠 -->
+  <path d="M20,50 A30,30 0 0 1 50,20 H150 A30,30 0 0 1 180,50 A30,30 0 0 1 150,80 H50 A30,30 0 0 1 20,50 Z"
+        fill="none" stroke="black" stroke-width="4"/>
+  <!-- 北向き矢印：左下を指す -->
+  <g transform="rotate(315, 100, 50)">
+    <polygon points="100,20 95,30 105,30" fill="#1d4ed8"/>
+    <line x1="100" y1="30" x2="100" y2="50" stroke="#1d4ed8" stroke-width="3" />
+  </g>
+</svg>
