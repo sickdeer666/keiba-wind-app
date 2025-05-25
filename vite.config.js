@@ -1,5 +1,10 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
 export default defineConfig({
   plugins: [react()],
-  root: '.',             // これでプロジェクトルートが明示
-  publicDir: 'public'    // public内のindex.htmlやiconがビルドに含まれる
+  publicDir: 'public',
+  build: {
+    outDir: 'dist'
+  }
 });
