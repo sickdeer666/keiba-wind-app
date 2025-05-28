@@ -1,77 +1,100 @@
-// App.jsx
-import React, { useEffect, useState } from 'react';
-import RacecourseWeatherUI from './RacecourseWeatherUI';
-import './index.css';
+import { useState, useEffect } from 'react';
+import { racecourses } from './racecourses';
 
-const racecourses = {
-  tokyo: { name: '東京', lat: 35.6639, lon: 139.4846 },
-  kyoto: { name: '京都', lat: 34.9086, lon: 135.7256 },
-  niigata: { name: '新潟', lat: 37.9122, lon: 139.0615 },
-};
-
-const apiKey = import.meta.env.VITE_OPENWEATHER_API_KEY;
-
-function getDirection(deg) {
-  const directions = ['北', '北北東', '北東', '東北東', '東', '東南東', '南東', '南南東', '南', '南南西', '南西', '西南西', '西', '西北西', '北西', '北北西'];
-  const index = Math.round(deg / 22.5) % 16;
-  return directions[index];
-}
-
-export default function App() {
+function App() {
   const [selected, setSelected] = useState('tokyo');
   const [weather, setWeather] = useState(null);
-  const [lastUpdated, setLastUpdated] = useState('');
-
-  const fetchWeather = () => {
-    const { lat, lon } = racecourses[selected];
-    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}&lang=ja`)
-      .then(res => res.json())
-      .then(data => {
-        setWeather({
-          speed: data.wind?.speed,
-          deg: data.wind?.deg,
-          description: data.weather?.[0]?.description,
-        });
-
-        const now = new Date();
-        const formatted = now.toLocaleTimeString('ja-JP', {
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-        setLastUpdated(formatted);
-      })
-      .catch(err => console.error("API fetch error:", err));
-  };
 
   useEffect(() => {
+ const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
+    const fetchWeather = () => {
+      const { lat, lon } = racecourses[selected];
+      fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}&lang=ja`)
+        .then(res => res.json())
+        .then(data =>
+          setWeather({
+            speed: data.wind?.speed,
+            deg: data.wind?.deg,
+            description: data.weather?.[0]?.description,
+          })
+        )
+        .catch(err => console.error("API fetch error:", err));
+    };
+
     fetchWeather();
     const interval = setInterval(fetchWeather, 60000);
     return () => clearInterval(interval);
   }, [selected]);
 
+  const getDirection = (deg) => {
+    if (deg > 337.5 || deg <= 22.5) return "北";
+    else if (deg <= 67.5) return "北東";
+    else if (deg <= 112.5) return "東";
+    else if (deg <= 157.5) return "南東";
+    else if (deg <= 202.5) return "南";
+    else if (deg <= 247.5) return "南西";
+    else if (deg <= 292.5) return "西";
+    else return "北西";
+  };
+
+  const selectedCourse = racecourses[selected];
+  const trueDirection = weather?.deg != null
+    ? (weather.deg + (selectedCourse.northOffset || 0)) % 360
+    : 0;
+
   return (
-    <div className="min-h-screen bg-gray-100 p-4">
-      <h1 className="text-xl font-bold mb-4">風見馬</h1>
-      <div className="mb-4">
-        <label className="block text-sm font-bold mb-1">競馬場</label>
-        <select
-          className="w-full border p-2 rounded"
-          value={selected}
-          onChange={(e) => setSelected(e.target.value)}
-        >
-          {Object.entries(racecourses).map(([id, rc]) => (
-            <option key={id} value={id}>{rc.name}</option>
-          ))}
-        </select>
+    <div className="p-4 max-w-md mx-auto">
+      <h1 className="text-xl font-bold mb-4">赤い矢印の方向へ風が吹いています</h1>
+      <h1 className="text-xl font-bold mb-4">競馬場の選択</h1>
+
+      <select
+        className="w-full p-2 border rounded mb-4"
+        value={selected}
+        onChange={(e) => setSelected(e.target.value)}
+      >
+        {Object.entries(racecourses).map(([id, rc]) => (
+          <option key={id} value={id}>
+            {rc.name}
+          </option>
+        ))}
+      </select>
+
+      <div className="bg-white p-4 shadow rounded mb-4">
+        <p>選択中：<strong>{selectedCourse.name}</strong></p>
+        <p>緯度: {selectedCourse.lat}</p>
+        <p>経度: {selectedCourse.lon}</p>
       </div>
-      <RacecourseWeatherUI selected={selected} deg={weather?.deg} />
+
+      <div className="relative mb-4">
+        <img
+          src={selectedCourse.image}
+          alt={`${selectedCourse.name}のコース図`}
+          className="w-full h-auto border rounded"
+        />
+        {weather?.deg != null && (
+          <svg
+            className="absolute top-4 right-4 w-16 h-16"
+            style={{ transform: `rotate(${trueDirection}deg)` }}
+            viewBox="0 0 100 100"
+            title={`風向き：${getDirection(weather.deg)}（${weather.deg}°）`}
+          >
+            <circle cx="50" cy="50" r="45" stroke="#3b82f6" strokeWidth="4" fill="white" />
+            <polygon points="50,5 35,30 65,30" fill="#ef4444" />
+            <line x1="50" y1="30" x2="50" y2="50" stroke="#ef4444" strokeWidth="4" />
+            <text x="48" y="12" fontSize="8" fill="#333">*</text>
+            <text x="88" y="52" fontSize="8" fill="#333">*</text>
+            <text x="48" y="92" fontSize="8" fill="#333">*</text>
+            <text x="8"  y="52" fontSize="8" fill="#333">*</text>
+          </svg>
+        )}
+      </div>
 
       {weather ? (
-        <div className="bg-blue-50 p-4 rounded shadow mt-4">
+        <div className="bg-blue-50 p-4 rounded shadow">
+          <p className="text-lg font-bold">風速・風向・天気</p>
           <p>風速: {weather.speed} m/s</p>
           <p>風向き: {getDirection(weather.deg)}（{weather.deg}°）</p>
           {weather.description && <p>天候: {weather.description}</p>}
-          <p className="text-gray-500 text-sm mt-2">最終更新：{lastUpdated}</p>
         </div>
       ) : (
         <p>読み込み中...</p>
@@ -79,3 +102,5 @@ export default function App() {
     </div>
   );
 }
+
+export default App;
