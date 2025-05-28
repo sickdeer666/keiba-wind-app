@@ -16,8 +16,17 @@ function App() {
             speed: data.wind?.speed,
             deg: data.wind?.deg,
             description: data.weather?.[0]?.description,
-          })
-        )
+          });
+          
+        const now = new Date();
+        const formatted = now.toLocaleTimeString('ja-JP', {
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        setLastUpdated(formatted);
+        })
+          
+        })
         .catch(err => console.error("API fetch error:", err));
     };
 
@@ -95,6 +104,8 @@ function App() {
           <p>風速: {weather.speed} m/s</p>
           <p>風向き: {getDirection(weather.deg)}（{weather.deg}°）</p>
           {weather.description && <p>天候: {weather.description}</p>}
+          <p className="text-gray-500 text-sm">最終更新：{lastUpdated}</p>
+
         </div>
       ) : (
         <p>読み込み中...</p>
