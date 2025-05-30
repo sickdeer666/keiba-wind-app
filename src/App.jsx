@@ -11,23 +11,24 @@ function App() {
       const { lat, lon } = racecourses[selected];
       fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}&lang=ja`)
         .then(res => res.json())
-        .then(data =>
-          setWeather({
-            speed: data.wind?.speed,
-            deg: data.wind?.deg,
-            description: data.weather?.[0]?.description,
-          });
-          
-        const now = new Date();
-        const formatted = now.toLocaleTimeString('ja-JP', {
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-        setLastUpdated(formatted);
-        })
-          
-        })
-        .catch(err => console.error("API fetch error:", err));
+        
+
+.then(data => {
+  setWeather({
+    speed: data.wind?.speed,
+    deg: data.wind?.deg,
+    description: data.weather?.[0]?.description,
+  });
+
+  const now = new Date();
+  const formatted = now.toLocaleTimeString('ja-JP', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+  setLastUpdated(formatted);
+})
+.catch(err => console.error("API fetch error:", err));
+        
     };
 
     fetchWeather();
